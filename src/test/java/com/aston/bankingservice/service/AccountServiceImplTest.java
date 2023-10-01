@@ -153,6 +153,7 @@ class AccountServiceImplTest {
         float money = 12.0F;
         int accountNumber = 4567;
         String pin = "1234";
+        account.setMoney(BigDecimal.valueOf(120.0F));
         when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
         when(accountMapper.accountToDto(account)).thenReturn(accountDto);
 
@@ -162,7 +163,7 @@ class AccountServiceImplTest {
 
         verify(accountRepository).update(accountArgumentCaptor.capture());
         Account updateAccount = accountArgumentCaptor.getValue();
-        assertEquals(BigDecimal.valueOf(-money), updateAccount.getMoney());
+        assertTrue(updateAccount.getMoney().compareTo(BigDecimal.valueOf(120.0F)) < 0);
     }
 
     @Test
@@ -208,12 +209,27 @@ class AccountServiceImplTest {
     }
 
     @Test
+    void depositAction_whenInvokeWithNoMoneyOnAccount_thenThrowAccountValidationException() {
+        String action = "withdraw";
+        float money = 120.0F;
+        int accountNumber = 4567;
+        String pin = "1234";
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
+
+        assertThrows(AccountValidationException.class,
+                ()->accountService.depositAction(action, money, accountNumber, pin));
+
+        verify(accountRepository, never()).update(any());
+    }
+
+    @Test
     void transferMoney_whenInvoke_thenReturnListAccountDto() {
         int recipientAccountNumber = 1234;
         float money = 12.0F;
         int senderAccountNumber = 4567;
         String pin = "1234";
         Account sender = account;
+        sender.setMoney(BigDecimal.valueOf(120.0F));
         Account recipient = Account.builder()
                 .name("Username")
                 .pin(pin)

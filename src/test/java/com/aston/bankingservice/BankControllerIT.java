@@ -285,7 +285,6 @@ public class BankControllerIT {
     @SneakyThrows
     @Test
     void transferMoney_whenServiceNotFound_thenStatusNotFound() {
-        List<AccountDto> expected = List.of(accountDto);
         int accountNumber = 1234;
         float money = 0.0F;
         int userAccountNumber = 3456;
@@ -306,7 +305,6 @@ public class BankControllerIT {
     @SneakyThrows
     @Test
     void transferMoney_whenServiceReceivedIncorrectPin_thenStatusBadRequest() {
-        List<AccountDto> expected = List.of(accountDto);
         int accountNumber = 1234;
         float money = 0.0F;
         int userAccountNumber = 3456;

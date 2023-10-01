@@ -15,32 +15,32 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 
 @RestController
-@RequestMapping
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/accounts")
 public class BankController {
 
     private final AccountService accountService;
 
-    @PostMapping("/accounts")
+    @PostMapping
     public ResponseEntity<AccountDto> createAccount(@RequestBody AccountNewDto accountNewDto) {
         log.info("AccountController.createAccount invoke with accountNewDto={}", accountNewDto);
         return ResponseEntity.status(CREATED).body(accountService.create(accountNewDto));
     }
 
-    @GetMapping("/accounts/{accountNumber}")
+    @GetMapping("/{accountNumber}")
     public ResponseEntity<AccountDto> getAccount(@PathVariable int accountNumber) {
         log.info("AccountController.getAccount invoke with accountNumber={}", accountNumber);
         return ResponseEntity.ok(accountService.getByNumber(accountNumber));
     }
 
-    @GetMapping("/accounts/all")
+    @GetMapping("/all")
     public ResponseEntity<List<AccountDto>> getAllAccounts() {
         log.info("AccountController.getAllAccounts invoke");
         return ResponseEntity.ok(accountService.getAll());
     }
 
-    @PatchMapping("/accounts/deposit/")
+    @PatchMapping("/deposit/")
     public ResponseEntity<AccountDto> depositAction(@RequestParam String action,
                                                    @RequestParam @Positive float money,
                                                    @RequestHeader("X-user-account-number") int accountNumber,
@@ -49,7 +49,7 @@ public class BankController {
         return ResponseEntity.ok(accountService.depositAction(action, money,accountNumber, pin));
     }
 
-    @PatchMapping("/accounts/transfer/{accountNumber}")
+    @PatchMapping("/transfer/{accountNumber}")
     public ResponseEntity<List<AccountDto>> transferMoney(@PathVariable int accountNumber,
                                                     @RequestParam @Positive float money,
                                                     @RequestHeader("X-user-account-number") int userAccountNumber,

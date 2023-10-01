@@ -282,7 +282,7 @@
 							"pm.test(\"Test account 'money' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('money');\r",
-							"    pm.expect(jsonData.money, '\"money\" must be 12.0').to.eql(12.0);\r",
+							"    pm.expect(jsonData.money, '\"money\" must be 24.0').to.eql(24.0);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -309,7 +309,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=24.0",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -325,7 +325,7 @@
 						},
 						{
 							"key": "money",
-							"value": "12.0"
+							"value": "24.0"
 						}
 					]
 				}
@@ -333,7 +333,65 @@
 			"response": []
 		},
 		{
-			"name": "withdraw money on deposit Copy",
+			"name": "withdraw money on deposit - no money",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=withdraw&money=120.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "withdraw"
+						},
+						{
+							"key": "money",
+							"value": "120.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "withdraw money on deposit",
 			"event": [
 				{
 					"listen": "test",
@@ -359,7 +417,7 @@
 							"pm.test(\"Test account 'money' field\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData).to.have.property('money');\r",
-							"    pm.expect(jsonData.money, '\"money\" must be 0.0').to.eql(0.0);\r",
+							"    pm.expect(jsonData.money, '\"money\" must be 12.0').to.eql(12.0);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -540,6 +598,66 @@
 							"    pm.response.to.be.json;\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/transfer/:accountNumber?money=12",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"transfer",
+						":accountNumber"
+					],
+					"query": [
+						{
+							"key": "money",
+							"value": "12"
+						}
+					],
+					"variable": [
+						{
+							"key": "accountNumber",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transfer money from 1 to 2 account - no money",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
 							"});"
 						],
 						"type": "text/javascript"
