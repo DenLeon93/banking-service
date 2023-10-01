@@ -10,11 +10,11 @@ import lombok.Data;
 @Builder
 public class AccountNewDto {
 
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message = "Field name may not be null and empty.")
+    @Size(max = 50,
+            message = "Field name size must be max 50 characters.")
     private String name;
 
-    @NotBlank
-    @Size(max = 4)
+    @NotBlank(message = "Field pin may not be null and empty.")
     private String pin;
 }

@@ -11,5 +11,7 @@ public class AccountDto {
 
     private String name;
 
+    private int accountNumber;
+
     private BigDecimal money;
 }
