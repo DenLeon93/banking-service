@@ -37,8 +37,10 @@ public class AccountServiceImpl implements AccountService {
             log.warn("AccountServiceImpl.create invoke with incorrect pin={}", accountNewDto.getPin());
             throw new AccountValidationException("Account has incorrect pin.");
         }
+
         Account account = accountMapper.accountFromNewDto(accountNewDto);
         account.setMoney(BigDecimal.ZERO);
+
         log.info("AccountServiceImpl.create create entity in repository.");
         return accountMapper.accountToDto(accountRepository.save(account));
     }
@@ -46,6 +48,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountDto> getAll() {
         List<Account> accounts = accountRepository.getAll();
+
         log.info("AccountServiceImpl.getAll invoke");
         return accounts.stream()
                 .map(accountMapper::accountToDto)
@@ -58,19 +61,23 @@ public class AccountServiceImpl implements AccountService {
         Account account = getOrThrow(accountNumber);
         pinValidateOrThrow(account, pin);
         BigDecimal moneyAcc = account.getMoney();
+
         switch (action) {
             case "put":
                 account.setMoney(moneyAcc.add(BigDecimal.valueOf(money)));
                 log.info("AccountServiceImpl.depositAction put money in deposit.");
                 break;
             case "withdraw":
+                availabilityOfMoney(account, BigDecimal.valueOf(money));
                 account.setMoney(moneyAcc.subtract(BigDecimal.valueOf(money)));
                 log.info("AccountServiceImpl.depositAction withdraw money in deposit.");
                 break;
             default:
                 throw new ApiException("Unsupported action with deposit");
         }
+
         accountRepository.update(account);
+
         log.info("AccountServiceImpl.depositAction update entity in repository.");
         return accountMapper.accountToDto(account);
     }
@@ -81,21 +88,28 @@ public class AccountServiceImpl implements AccountService {
         Account sender = getOrThrow(userAccountNumber);
         Account recipient = getOrThrow(accountNumber);
         pinValidateOrThrow(sender, pin);
+        availabilityOfMoney(sender, BigDecimal.valueOf(money));
+
         BigDecimal moneyAcc = sender.getMoney();
         sender.setMoney(moneyAcc.subtract(BigDecimal.valueOf(money)));
+
         moneyAcc = recipient.getMoney();
         recipient.setMoney(moneyAcc.add(BigDecimal.valueOf(money)));
+
         accountRepository.update(sender);
         accountRepository.update(recipient);
+
         List<AccountDto> result = new ArrayList<>();
         result.add(accountMapper.accountToDto(sender));
         result.add(accountMapper.accountToDto(recipient));
+
         return result;
     }
 
     @Override
     public AccountDto getByNumber(int accountNumber) {
         Account account = getOrThrow(accountNumber);
+
         log.info("AccountServiceImpl.getByNumber invoke");
         return accountMapper.accountToDto(account);
     }
@@ -109,6 +123,12 @@ public class AccountServiceImpl implements AccountService {
         if (!account.getPin().equals(pin)) {
             log.warn("AccountServiceImpl invoke with incorrect pin");
             throw new AccountValidationException("Insert incorrect PIN.");
+        }
+    }
+
+    private void availabilityOfMoney(Account account, BigDecimal money) {
+        if (money.compareTo(account.getMoney()) > 0) {
+            throw new AccountValidationException("There is not enough money in the account.");
         }
     }
 }
