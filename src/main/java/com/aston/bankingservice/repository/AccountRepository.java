@@ -12,5 +12,5 @@ public interface AccountRepository {
 
     List<Account> getAll();
 
-    void update(Account account);
+    Account update(Account account);
 }

@@ -41,7 +41,8 @@ public class AccountRepositoryImpl implements AccountRepository {
     }
 
     @Override
-    public void update(Account account) {
+    public Account update(Account account) {
         storage.replace(account.getAccountNumber(), account);
+        return account;
     }
 }
