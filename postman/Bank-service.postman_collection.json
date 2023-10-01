@@ -1,0 +1,738 @@
+{
+	"info": {
+		"_postman_id": "065a895a-3efe-47de-8a70-8ac98fbb7824",
+		"name": "Bank-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26366753"
+	},
+	"item": [
+		{
+			"name": "account get all (emoty)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Test list accounts response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length, 'List length must be 0').to.eql(0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"type": "text"
+					}
+				],
+				"url": "{{baseUrl}}/accounts/all"
+			},
+			"response": []
+		},
+		{
+			"name": "create account Sender",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Has account get response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"UserName Sender\",\r\n  \"pin\": \"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/accounts"
+			},
+			"response": []
+		},
+		{
+			"name": "create account pin invalid fail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"UserName Sender\",\r\n  \"pin\": \"abcdjkh\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/accounts"
+			},
+			"response": []
+		},
+		{
+			"name": "create account Recipient",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Has account get response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"UserName Recipient\",\r\n  \"pin\": \"4567\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/accounts"
+			},
+			"response": []
+		},
+		{
+			"name": "account get by accountNumber=1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Has user get response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"pm.test(\"Test account 'name' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('name');\r",
+							"    pm.expect(jsonData.name, '\"name\" must be \"UserName Sender\"').to.eql('UserName Sender');\r",
+							"});\r",
+							"pm.test(\"Test account 'accountNumber' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('accountNumber');\r",
+							"    pm.expect(jsonData.accountNumber, '\"accountNumber\" must be 1').to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Test account 'money' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('money');\r",
+							"    pm.expect(jsonData.money, '\"money\" must be 0.0').to.eql(0.0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/:accountNumber",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						":accountNumber"
+					],
+					"variable": [
+						{
+							"key": "accountNumber",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "account get all (2 accounts)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Test list accounts response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*",
+						"type": "text"
+					}
+				],
+				"url": "{{baseUrl}}/accounts/all"
+			},
+			"response": []
+		},
+		{
+			"name": "put money on deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Has user get response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"pm.test(\"Test account 'name' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('name');\r",
+							"    pm.expect(jsonData.name, '\"name\" must be \"UserName Sender\"').to.eql('UserName Sender');\r",
+							"});\r",
+							"pm.test(\"Test account 'accountNumber' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('accountNumber');\r",
+							"    pm.expect(jsonData.accountNumber, '\"accountNumber\" must be 1').to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Test account 'money' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('money');\r",
+							"    pm.expect(jsonData.money, '\"money\" must be 12.0').to.eql(12.0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "put"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "withdraw money on deposit Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Has user get response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"pm.test(\"Test account 'name' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('name');\r",
+							"    pm.expect(jsonData.name, '\"name\" must be \"UserName Sender\"').to.eql('UserName Sender');\r",
+							"});\r",
+							"pm.test(\"Test account 'accountNumber' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('accountNumber');\r",
+							"    pm.expect(jsonData.accountNumber, '\"accountNumber\" must be 1').to.eql(1);\r",
+							"});\r",
+							"pm.test(\"Test account 'money' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('money');\r",
+							"    pm.expect(jsonData.money, '\"money\" must be 0.0').to.eql(0.0);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=withdraw&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "withdraw"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put money on deposit fail pin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "123423",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "put"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put money on deposit - not found deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "122",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "put"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transfer money from 1 to 2 account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.be.ok;\r",
+							"});\r",
+							"pm.test(\"Test list accounts response\", function () {\r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length, 'List length must be 2').to.eql(2);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/transfer/:accountNumber?money=12",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"transfer",
+						":accountNumber"
+					],
+					"query": [
+						{
+							"key": "money",
+							"value": "12"
+						}
+					],
+					"variable": [
+						{
+							"key": "accountNumber",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transfer money from 1 to 2 account - pin incorrect",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "1",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "12342",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "put"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transfer money from 1 to 2 account - not found deposit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-user-account-number",
+						"value": "122",
+						"type": "text"
+					},
+					{
+						"key": "X-user-pin-code",
+						"value": "1234",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/accounts/deposit/?action=put&money=12.0",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"accounts",
+						"deposit",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "put"
+						},
+						{
+							"key": "money",
+							"value": "12.0"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

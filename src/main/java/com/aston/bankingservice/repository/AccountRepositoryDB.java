@@ -56,7 +56,7 @@ public class AccountRepositoryDB implements AccountRepository {
 
     @Override
     public List<Account> getAll() {
-        String query = "SELECT * FROM users";
+        String query = "SELECT * FROM accounts";
         log.info("AccountRepositoryDB.getAll invoke");
         return jdbcTemplate.query(query, this::makeAccount);
     }
