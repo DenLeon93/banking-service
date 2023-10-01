@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class AccountRepositoryImpl implements AccountRepository {
+public class AccountRepositoryMemo implements AccountRepository {
 
     private final Map<Integer, Account> storage = new HashMap<>();
 

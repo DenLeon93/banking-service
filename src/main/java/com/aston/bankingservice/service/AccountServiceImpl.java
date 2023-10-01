@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountDto depositAction(String action, float money, int accountNumber, String pin) {
         Account account = getOrThrow(accountNumber);
         pinValidateOrThrow(account, pin);
@@ -74,6 +76,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public List<AccountDto> transferMoney(int accountNumber, float money, int userAccountNumber, String pin) {
         Account sender = getOrThrow(userAccountNumber);
         Account recipient = getOrThrow(accountNumber);
