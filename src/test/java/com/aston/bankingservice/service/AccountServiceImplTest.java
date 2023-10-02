@@ -3,10 +3,7 @@ package com.aston.bankingservice.service;
 import com.aston.bankingservice.exceptions.AccountValidationException;
 import com.aston.bankingservice.exceptions.ApiException;
 import com.aston.bankingservice.exceptions.EntityNotFoundException;
-import com.aston.bankingservice.model.Account;
-import com.aston.bankingservice.model.AccountDto;
-import com.aston.bankingservice.model.AccountMapper;
-import com.aston.bankingservice.model.AccountNewDto;
+import com.aston.bankingservice.model.*;
 import com.aston.bankingservice.repository.AccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -308,5 +305,76 @@ class AccountServiceImplTest {
                 ()-> accountService.getByNumber(accountNumber));
 
         verify(accountMapper, never()).accountToDto(any());
+    }
+
+    @Test
+    void delete_whenInvoke_thenInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1234";
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
+
+        accountService.delete(accountNumber, pin);
+
+        verify(accountRepository).delete(account);
+    }
+    @Test
+    void delete_whenInvokeAndAccountNotFound_thenNotInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1234";
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                ()-> accountService.delete(accountNumber, pin));
+
+        verify(accountRepository, never()).delete(account);
+    }
+    @Test
+    void delete_whenInvokeWithIncorrectPin_thenNotInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1235"; // correct pin=1234
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
+
+        assertThrows(AccountValidationException.class,
+                ()-> accountService.delete(accountNumber, pin));
+
+        verify(accountRepository, never()).delete(account);
+    }
+
+    @Test
+    void update_whenInvoke_thenInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1234";
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
+        doNothing().when(accountMapper).updateFromUpdateDto(account, accountUpdateDto);
+        when(accountMapper.accountToDto(any())).thenReturn(accountDto);
+
+        accountService.update(accountNumber, pin, accountUpdateDto);
+
+        verify(accountRepository).update(account);
+    }
+    @Test
+    void update_whenInvokeAndAccountNotFound_thenNotInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1234";
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                ()-> accountService.update(accountNumber, pin, accountUpdateDto));
+
+        verify(accountRepository, never()).update(account);
+    }
+    @Test
+    void update_whenInvokeWithIncorrectPin_thenNotInvokeRepository() {
+        int accountNumber = 1;
+        String pin = "1235"; // correct pin=1234
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountRepository.findByNumber(accountNumber)).thenReturn(Optional.of(account));
+
+        assertThrows(AccountValidationException.class,
+                ()-> accountService.update(accountNumber, pin, accountUpdateDto));
+
+        verify(accountRepository, never()).update(account);
     }
 }

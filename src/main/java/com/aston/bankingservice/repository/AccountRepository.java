@@ -13,4 +13,6 @@ public interface AccountRepository {
     List<Account> getAll();
 
     Account update(Account account);
+
+    void delete(Account account);
 }

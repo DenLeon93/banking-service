@@ -45,4 +45,9 @@ public class AccountRepositoryMemo implements AccountRepository {
         storage.replace(account.getAccountNumber(), account);
         return account;
     }
+
+    @Override
+    public void delete(Account account) {
+        storage.remove(account.getAccountNumber());
+    }
 }

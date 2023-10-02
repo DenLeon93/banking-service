@@ -2,6 +2,7 @@ package com.aston.bankingservice;
 
 import com.aston.bankingservice.model.AccountDto;
 import com.aston.bankingservice.model.AccountNewDto;
+import com.aston.bankingservice.model.AccountUpdateDto;
 import com.aston.bankingservice.service.AccountService;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -42,20 +43,36 @@ public class BankController {
 
     @PatchMapping("/deposit/")
     public ResponseEntity<AccountDto> depositAction(@RequestParam String action,
-                                                   @RequestParam @Positive float money,
-                                                   @RequestHeader("X-user-account-number") int accountNumber,
-                                                   @RequestHeader("X-user-pin-code") String pin) {
+                                                    @RequestParam @Positive float money,
+                                                    @RequestHeader("X-user-account-number") int accountNumber,
+                                                    @RequestHeader("X-user-pin-code") String pin) {
         log.info("AccountController.depositMoney invoke with accountNumber={}, action={}, money={}", accountNumber, action, money);
-        return ResponseEntity.ok(accountService.depositAction(action, money,accountNumber, pin));
+        return ResponseEntity.ok(accountService.depositAction(action, money, accountNumber, pin));
     }
 
     @PatchMapping("/transfer/{accountNumber}")
     public ResponseEntity<List<AccountDto>> transferMoney(@PathVariable int accountNumber,
-                                                    @RequestParam @Positive float money,
-                                                    @RequestHeader("X-user-account-number") int userAccountNumber,
-                                                    @RequestHeader("X-user-pin-code") String pin) {
+                                                          @RequestParam @Positive float money,
+                                                          @RequestHeader("X-user-account-number") int userAccountNumber,
+                                                          @RequestHeader("X-user-pin-code") String pin) {
         log.info("AccountController.transferMoney invoke with userAccountNumber={}, money={}, accountNumber={},", userAccountNumber, money, accountNumber);
 
         return ResponseEntity.ok(accountService.transferMoney(accountNumber, money, userAccountNumber, pin));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAccount(@RequestHeader("X-user-account-number") int userAccountNumber,
+                                              @RequestHeader("X-user-pin-code") String pin) {
+        log.info("AccountController.deleteAccount invoke with userAccountNumber={}", userAccountNumber);
+        accountService.delete(userAccountNumber, pin);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<AccountDto> updateAccount(@RequestBody AccountUpdateDto accountUpdateDto,
+                                                    @RequestHeader("X-user-account-number") int userAccountNumber,
+                                                    @RequestHeader("X-user-pin-code") String pin) {
+        log.info("AccountController.updateAccount invoke with userAccountNumber={}", userAccountNumber);
+        return ResponseEntity.ok(accountService.update(userAccountNumber, pin, accountUpdateDto));
     }
 }

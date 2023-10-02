@@ -3,10 +3,7 @@ package com.aston.bankingservice.service;
 import com.aston.bankingservice.exceptions.AccountValidationException;
 import com.aston.bankingservice.exceptions.ApiException;
 import com.aston.bankingservice.exceptions.EntityNotFoundException;
-import com.aston.bankingservice.model.Account;
-import com.aston.bankingservice.model.AccountDto;
-import com.aston.bankingservice.model.AccountMapper;
-import com.aston.bankingservice.model.AccountNewDto;
+import com.aston.bankingservice.model.*;
 import com.aston.bankingservice.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,6 +101,21 @@ public class AccountServiceImpl implements AccountService {
         result.add(accountMapper.accountToDto(recipient));
 
         return result;
+    }
+
+    @Override
+    public void delete(int userAccountNumber, String pin) {
+        Account account = getOrThrow(userAccountNumber);
+        pinValidateOrThrow(account, pin);
+        accountRepository.delete(account);
+    }
+
+    @Override
+    public AccountDto update(int userAccountNumber, String pin, AccountUpdateDto accountUpdateDto) {
+        Account account = getOrThrow(userAccountNumber);
+        pinValidateOrThrow(account, pin);
+        accountMapper.updateFromUpdateDto(account, accountUpdateDto);
+        return accountMapper.accountToDto(accountRepository.update(account));
     }
 
     @Override

@@ -73,6 +73,12 @@ public class AccountRepositoryDB implements AccountRepository {
         return account;
     }
 
+    @Override
+    public void delete(Account account) {
+        String query = "DELETE FROM accounts WHERE account_number = ?";
+        jdbcTemplate.update(query, account.getAccountNumber());
+    }
+
     private Account makeAccount(ResultSet rs, int rowNum) throws SQLException {
         return Account.builder()
                 .name(rs.getString("name"))

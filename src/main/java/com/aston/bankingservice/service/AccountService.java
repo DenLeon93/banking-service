@@ -2,6 +2,7 @@ package com.aston.bankingservice.service;
 
 import com.aston.bankingservice.model.AccountDto;
 import com.aston.bankingservice.model.AccountNewDto;
+import com.aston.bankingservice.model.AccountUpdateDto;
 
 import java.util.List;
 
@@ -15,4 +16,9 @@ public interface AccountService {
     AccountDto depositAction(String action, float money, int accountNumber, String pin);
 
     List<AccountDto> transferMoney(int accountNumber, float money, int userAccountNumber, String pin);
+
+
+    void delete(int userAccountNumber, String pin);
+
+    AccountDto update(int userAccountNumber, String pin, AccountUpdateDto accountUpdateDto);
 }

@@ -29,4 +29,18 @@ public class AccountMapper {
                 .build();
         return account;
     }
+
+    public void updateFromUpdateDto(Account account, AccountUpdateDto accountUpdateDto) {
+
+        if ( accountUpdateDto == null ) {
+            return;
+        }
+
+        if ( accountUpdateDto.getName() != null ) {
+            account.setName( accountUpdateDto.getName() );
+        }
+        if ( accountUpdateDto.getPin() != null ) {
+            account.setPin( accountUpdateDto.getPin() );
+        }
+    }
 }

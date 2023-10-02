@@ -5,6 +5,7 @@ import com.aston.bankingservice.exceptions.EntityNotFoundException;
 import com.aston.bankingservice.model.Account;
 import com.aston.bankingservice.model.AccountDto;
 import com.aston.bankingservice.model.AccountNewDto;
+import com.aston.bankingservice.model.AccountUpdateDto;
 import com.aston.bankingservice.service.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
@@ -350,5 +351,80 @@ public class BankControllerIT {
                 .andExpect(status().isBadRequest());
 
         verify(accountService, never()).transferMoney(anyInt(), anyFloat(), anyInt(), anyString());
+    }
+
+    @SneakyThrows
+    @Test
+    void delete_whenInvoke_thenStatusNoContent() {
+        int userAccountNumber = 3456;
+        String pin = "1234";
+
+        mockMvc.perform(delete("/accounts")
+                        .contentType("application/json")
+                        .header("X-user-account-number", userAccountNumber)
+                        .header("X-user-pin-code", pin))
+                .andExpect(status().isNoContent());
+
+        verify(accountService).delete(userAccountNumber, pin);
+    }
+
+    @SneakyThrows
+    @Test
+    void update_whenInvoke_thenStatusOk() {
+        int userAccountNumber = 3456;
+        String pin = "1234";
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountService.update(userAccountNumber, pin, accountUpdateDto)).thenReturn(accountDto);
+
+        String result = mockMvc.perform(put("/accounts")
+                        .contentType("application/json")
+                        .header("X-user-account-number", userAccountNumber)
+                        .header("X-user-pin-code", pin)
+                        .content(objectMapper.writeValueAsString(accountUpdateDto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(accountDto), result);
+        verify(accountService).update(userAccountNumber, pin, accountUpdateDto);
+    }
+
+    @SneakyThrows
+    @Test
+    void update_whenInvokeAccountNotFound_thenStatusNotFound() {
+        int userAccountNumber = 3456;
+        String pin = "1234";
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountService.update(userAccountNumber, pin, accountUpdateDto)).
+                thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(put("/accounts")
+                        .contentType("application/json")
+                        .header("X-user-account-number", userAccountNumber)
+                        .header("X-user-pin-code", pin)
+                        .content(objectMapper.writeValueAsString(accountUpdateDto)))
+                .andExpect(status().isNotFound());
+
+        verify(accountService).update(userAccountNumber, pin, accountUpdateDto);
+    }
+
+    @SneakyThrows
+    @Test
+    void update_whenServiceReceivedIncorrectPin_thenStatusBadRequest() {
+        int userAccountNumber = 3456;
+        String pin = "1234";
+        AccountUpdateDto accountUpdateDto = AccountUpdateDto.builder().build();
+        when(accountService.update(userAccountNumber, pin, accountUpdateDto)).
+                thenThrow(AccountValidationException.class);
+
+        mockMvc.perform(put("/accounts")
+                        .contentType("application/json")
+                        .header("X-user-account-number", userAccountNumber)
+                        .header("X-user-pin-code", pin)
+                        .content(objectMapper.writeValueAsString(accountUpdateDto)))
+                .andExpect(status().isBadRequest());
+
+        verify(accountService).update(userAccountNumber, pin, accountUpdateDto);
     }
 }
